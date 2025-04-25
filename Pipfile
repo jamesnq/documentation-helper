@@ -23,6 +23,8 @@ langchain-community = "*"
 langsmith = "*"
 pinecone = "*"
 pillow = "*"
+urllib3 = "*"
+langchain-openai = "*"
 
 [dev-packages]
 

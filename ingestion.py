@@ -15,7 +15,9 @@ embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
 
 def ingest_docs():
-    loader = ReadTheDocsLoader("langchain-docs/api.python.langchain.com/en/latest")
+    loader = ReadTheDocsLoader(
+        "langchain-docs/api.python.langchain.com/en/latest/", encoding='utf-8'
+    )
 
     raw_documents = loader.load()
     print(f"loaded {len(raw_documents)} documents")
@@ -28,7 +30,15 @@ def ingest_docs():
         doc.metadata.update({"source": new_url})
 
     print(f"Going to add {len(documents)} to Pinecone")
-    PineconeVectorStore.from_documents(documents, embeddings, index_name=INDEX_NAME)
+    vectorstore = PineconeVectorStore(
+        embedding=embeddings,
+        index_name="langchain-doc-index"
+    )
+    batch_size = 100
+    for i in range(0, len(documents), batch_size):
+        batch = documents[i:i + batch_size]
+        vectorstore.add_documents(batch)
+        print(f"Uploaded batch {i // batch_size + 1} with {len(batch)} documents")
     print("****Loading to vectorstore done ***")
 
 
