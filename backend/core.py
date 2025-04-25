@@ -17,7 +17,7 @@ INDEX_NAME = "langchain-doc-index"
 def run_llm(query: str):
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
     docsearch = PineconeVectorStore(index_name=INDEX_NAME, embedding=embeddings)
-    chat = ChatOpenAI(verbose=True, temperature=0)
+    chat = ChatOpenAI(model="gpt-4o-mini", verbose=True, temperature=0)
 
     retrieval_qa_chat_prompt = hub.pull("langchain-ai/retrieval-qa-chat")
     stuff_documents_chain = create_stuff_documents_chain(chat, retrieval_qa_chat_prompt)
@@ -27,7 +27,6 @@ def run_llm(query: str):
     )
     result = qa.invoke(input={"input": query})
     return result
-
 
 if __name__ == "__main__":
     res = run_llm(query="What is a LangChain Chain?")
